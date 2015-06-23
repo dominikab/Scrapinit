@@ -3,26 +3,19 @@ var secret = require('../config.js');
 var db = require('./db.js');
 var Sequelize = require('sequelize');
 var mandrill = require('mandrill-api');
+var Sequelize = require('sequelize');
 mandrill_client = new mandrill.Mandrill(secret.mandrill.client_id);
 
 // To run the cronjob as it is now: navigate to server dir and type node cronjob
-var schedule = '10 * * * * *';
+
+var schedule = '0 */5 * * * *';
 //To run every 3 seconds do */3; every 5 min do * */5 *
 
 var cronjob = new CronJob(schedule, function() {
   console.log('You will see this message every 5 min');
   // check database for jobs assigned for cronjob
+  // access all the users in the database
 
-  // get urls 
-
-  db.User.findAll()
-    .then(function(allUsers) {
-      console.log('here are all our users', allUsers);
-    })
-
-  // render the page and compare if it changed 
-  // if change occured changed=true;
-  // if change  occured then send an email
   var changed = false;
   if (changed) {
     sendEmail('', '');
