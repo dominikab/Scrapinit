@@ -14,7 +14,7 @@ var schemas = dbConfig.createSchemas(sequelize, true);
 
 var User = schemas.User;
 var Url = schemas.Url;
-var UserUrl = schemas.UserUsrl;
+var UserUrl = schemas.UserUrl;
 
 User.insert = function(user) {
   User.create(user);
