@@ -11,7 +11,6 @@ var validProtocols = {
 
 module.exports = {
   getScreenshot: function(url, userId, cb) {
-
     var urlWithoutHTTP = url.substr(7);
     webshot(url, '../client/assets/' + userId + '/' + urlWithoutHTTP + '-preview.jpg', function(err) {
       // screenshot now saved to google.png// screenshot now saved to hello_world.png
@@ -19,9 +18,9 @@ module.exports = {
     });
   },
   cropImg: function(url, crop, cb) {
-    console.log(url);
+    console.log('inside of cropImg',url);
     console.log(JSON.stringify(crop));
-
+    console.log('crop', crop)
     gm('../client/' + url)
       .crop(crop.w, crop.h, crop.x, crop.y)
       .write('../client/' + url.substr(0, url.length - 12) + '.jpg' , function(err){

@@ -5,6 +5,7 @@ var secret = require('../config.js');
 var db = require('./db.js');
 var Sequelize = require('sequelize');
 var mandrill = require('mandrill-api');
+var resemble = require('resemblejs')
 mandrill_client = new mandrill.Mandrill(secret.mandrill.client_id);
 
 // To run the cronjob as it is now: navigate to server dir and type node cronjob
@@ -27,41 +28,47 @@ var cronjob = new CronJob(schedule, function() {
   .then(function(allUsers) {
     for (var i = 0; i < allUsers.length; i++){
       var currEmail = allUsers[i].email;
+      console.log('email', currEmail)
       allUsers[i].getUrls()
       .then(function(url) {
-            // display html that are changed
-            for (var i = 0; i < url.length; i++) {
-              getExternalUrl(url[i], function(newHtml, url) {
-                newHtml = newHtml.substring(3000, 4000);
-                if (url) {
-                 for (var i=0; i<url.length;i++){
-                        // get image out of the database
-                        var img1 = url[0].UserUrl.dataValues.cropImage;
-                        // access the url from which the picture was taken
-                        // call a function which takes url of the image and get a pic of the website
-                        var img2; 
-                        compare(img1,img2);
-                      }
-                    }
+        console.log('in the for loop')
+        for (var j=0; j<url.length; j++){
+           console.log('url', url[j].UserUrl.cropImage)
+           // console.log('url', url[j].id)
+           
+           var img1 = url[j].UserUrl.cropImage;
+           var params = {
+            h: url[j].UserUrl.cropHeight,
+            w: url[j].UserUrl.cropWidth,
+            x: url[j].UserUrl.cropOriginX,
+            y: url[j].UserUrl.cropOriginY
+           }
+        // get the server to render the page with params coordinates
+        basicScraper.getScreenshot(url[j].url, url[j].id, function(urlToThePage) {
+          console.log('url to the page', urlToThePage)
+          basicScraper.cropImg(urlToThePage, params, function() {console.log()}, true);
+        })
+        //
 
-                    var compare = function (img1, img2){
-              // using a library compare img1 to img2
-              if (!(img1===img2){
-               console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-               console.log('there is a change at', url.url,'!')
+        }
+       
+            // display html that are changed
+               var compare = function (img1, img2){
+               //  var diff = resemble(img1).compareTo(img2).ignoreColors().onComplete(function(data){
+               //  console.log(data);
+               //  });
+              }
+
+              var img1 = '../client/assets/qvNot4g0dBZNio45GtwpXfopy8poLxm8/google.com.jpg';
+              var img2 = '../client/assets/qvNot4g0dBZNio45GtwpXfopy8poLxm8/google.com.jpg';
+              compare(img1,img2);
+
                     // send email
                     // sendEmail(currEmail, currEmail);
-                    // update html value in database
-                  }
-                } 
-              }
+                    // update html value in database                    } 
             });
-
-            }
-          })
-}
-})
-
+        };
+      });
 }, null, true, 'America/Los_Angeles');
 
 var sendEmail = function (email, name){
