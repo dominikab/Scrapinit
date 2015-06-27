@@ -58,68 +58,76 @@ module.exports = {
           console.log('req.body.crop' + JSON.stringify(req.body.crop));
 
           basicScraper.cropImg(req.body.urlImg, req.body.crop, false, function(cropImg, crop) {
-            // crop image whether or not the url has already been submitted
-            console.log('***** urlImg',req.body.urlImg )
-            if (urlFound) {
+
+            basicScraper.imagetotext(cropImg, function(text) {
 
 
-               console.log('loggin it yo', JSON.stringify(crop));
-               console.log('urlfound: '+ urlFound);
-
-               userFound.addUrl(urlFound, {
-                  cropImage: cropImg,
-                  cropHeight: crop.h,
-                  cropWidth: crop.w,
-                  cropOriginX: crop.x,
-                  cropOriginY: crop.y
-               })
-               .then(function(associate) {
-                 res.status(201).json({ cropImage: cropImg });
-
-               });
+              // crop image whether or not the url has already been submitted
+              console.log('***** urlImg',req.body.urlImg )
+              if (urlFound) {
 
 
-              //  userFound.getUrls()
-              //       .then(function(associate){
-              //         console.log('url found');
-              //         //console.log('associate'+ JSON.stringify(associate[0]));
-              //          res.status(201).json({});
-              //       })
-              //       .catch(function(err) {
-              //         console.log('we found an error', err);
-              //       })
-              //     // db.associate(userFound.email, urlFound.url, {html: html, selector: selector})//need to store and send the html & selector
+                 console.log('loggin it yo', JSON.stringify(crop));
+                 console.log('urlfound: '+ urlFound);
+
+                 userFound.addUrl(urlFound, {
+                    cropImage: cropImg,
+                    cropHeight: crop.h,
+                    cropWidth: crop.w,
+                    cropOriginX: crop.x,
+                    cropOriginY: crop.y,
+                    webImage: text
+                 })
+                 .then(function(associate) {
+                   res.status(201).json({ cropImage: cropImg, text: text });
+
+                 });
 
 
-               console.log('url found');;
+                //  userFound.getUrls()
+                //       .then(function(associate){
+                //         console.log('url found');
+                //         //console.log('associate'+ JSON.stringify(associate[0]));
+                //          res.status(201).json({});
+                //       })
+                //       .catch(function(err) {
+                //         console.log('we found an error', err);
+                //       })
+                //     // db.associate(userFound.email, urlFound.url, {html: html, selector: selector})//need to store and send the html & selector
 
-            } else {  // else !urlFound
 
-              console.log('url not found');
+                 console.log('url found');;
 
-              db.Url.create(url)
-                .then(function (urlCreated) {
+              } else {  // else !urlFound
 
-                  userFound.addUrl(urlCreated, {
-                     cropImage: cropImg,
-                     cropHeight: crop.h,
-                     cropWidth: crop.w,
-                     cropOriginX: crop.x,
-                     cropOriginY: crop.y
-                  })
-                  .then(function(associate) {
-                    //console.log('associate datavalues  ', JSON.stringify(associate[0][0].dataValues));
-                    res.status(201).json({cropImage: associate[0][0].dataValues.cropImage});
-                  })
+                console.log('url not found');
+
+                db.Url.create(url)
+                  .then(function (urlCreated) {
+
+                    userFound.addUrl(urlCreated, {
+                       cropImage: cropImg,
+                       cropHeight: crop.h,
+                       cropWidth: crop.w,
+                       cropOriginX: crop.x,
+                       cropOriginY: crop.y
+                    })
+                    .then(function(associate) {
+                      //console.log('associate datavalues  ', JSON.stringify(associate[0][0].dataValues));
+                      res.status(201).json({cropImage: associate[0][0].dataValues.cropImage});
+                    })
+                    .catch(function (err) {
+                      res.status(403).json({message: err.message});
+                    }); // close catch of addurl db call
+                  })  // close then of create url db call
                   .catch(function (err) {
                     res.status(403).json({message: err.message});
-                  }); // close catch of addurl db call
-                })  // close then of create url db call
-                .catch(function (err) {
-                  res.status(403).json({message: err.message});
-                }); // close catch of create url db call
+                  }); // close catch of create url db call
 
-            } // close else urlFound
+              } // close else urlFound
+
+
+            }); // close image to text callback
 
           }); // close cropImg callback
 
