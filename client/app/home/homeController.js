@@ -54,6 +54,7 @@ angular.module('app.home', ['app.home.addUrl', 'app.home.results', 'ui.router', 
 
                     if (foundId > -1) {
                       $scope.urls[foundId].img = data.cropImage + '?' + new Date().getTime();
+                      $scope.urls[foundId].text = data.text;
                     } else {
                       $scope.urls.push({url: $scope.url, img: data.cropImage, text: data.text});
                     }
@@ -105,7 +106,7 @@ angular.module('app.home', ['app.home.addUrl', 'app.home.results', 'ui.router', 
       var urlArray = data.urls;
       console.log('data - ', data);
       for (var i = 0; i < urlArray.length; i++) {
-        urls.push({url: urlArray[i].url, img: urlArray[i].UserUrl.cropImage});
+        urls.push({url: urlArray[i].url, img: urlArray[i].UserUrl.cropImage, text: urlArray[i].UserUrl.webImage});
       }
       callback(false, urls);
     })

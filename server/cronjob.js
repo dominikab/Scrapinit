@@ -46,12 +46,11 @@ var cronjob = new CronJob(schedule, function() {
           console.log('url to the page', urlToThePage)
           basicScraper.cropImg(urlToThePage, params, true,  function(img2) {
             console.log('image path', img2);
-            
+
             compare(img1, img2, function (equal){
               if (!equal){
                //sendEmail(currEmail, currEmail);
               };
-              
             });
           });
         });

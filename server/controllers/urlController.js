@@ -114,7 +114,7 @@ module.exports = {
                     })
                     .then(function(associate) {
                       //console.log('associate datavalues  ', JSON.stringify(associate[0][0].dataValues));
-                      res.status(201).json({cropImage: associate[0][0].dataValues.cropImage});
+                      res.status(201).json({cropImage: associate[0][0].dataValues.cropImage, text: text });
                     })
                     .catch(function (err) {
                       res.status(403).json({message: err.message});
