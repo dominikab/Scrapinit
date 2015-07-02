@@ -8,8 +8,8 @@ angular.module('app.home.list', ['toggle-switch'])
     if (!value){
       decision = 'txt';
     }
-
 console.log('user decision is' , decision)
+
 }
 
 
